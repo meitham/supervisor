@@ -55,6 +55,7 @@ class Subprocess(object):
     exitstatus = None # status attached to dead process by finish()
     spawnerr = None # error message attached by spawn() if any
     group = None # ProcessGroup instance if process is in the group
+    inherit_env = True  # inherit all env vars from parent process
 
     def __init__(self, config):
         """Constructor.
@@ -309,7 +310,10 @@ class Subprocess(object):
                 return # finally clause will exit the child process
 
             # set environment
-            env = os.environ.copy()
+            if self.config.inherit_env:
+                env = os.environ.copy()
+            else:
+                env = {}
             env['SUPERVISOR_ENABLED'] = '1'
             serverurl = self.config.serverurl
             if serverurl is None: # unset

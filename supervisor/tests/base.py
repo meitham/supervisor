@@ -519,7 +519,7 @@ class DummyPConfig:
                  stderr_syslog=False,
                  redirect_stderr=False,
                  stopsignal=None, stopwaitsecs=10, stopasgroup=False, killasgroup=False,
-                 exitcodes=(0,), environment=None, serverurl=None):
+                 exitcodes=(0,), inherit_env=True, environment=None, serverurl=None):
         self.options = options
         self.name = name
         self.command = command
@@ -550,6 +550,7 @@ class DummyPConfig:
         self.stopasgroup = stopasgroup
         self.killasgroup = killasgroup
         self.exitcodes = exitcodes
+        self.inherit_env = inherit_env
         self.environment = environment
         self.directory = directory
         self.umask = umask

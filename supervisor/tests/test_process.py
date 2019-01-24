@@ -494,6 +494,20 @@ class SubprocessTests(unittest.TestCase):
         self.assertEqual(options.privsdropped, None)
         self.assertEqual(options._exitcode, 127)
 
+    def test_spawn_as_child_not_inherit_pconfig_environment(self):
+        options = DummyOptions()
+        options.forkpid = 0
+        config = DummyPConfig(options, 'cat', '/bin/cat',
+                              inherit_env=False,
+                              environment={'_TEST_':'1'})
+        instance = self._makeOne(config)
+        result = instance.spawn()
+        self.assertEqual(result, None)
+        self.assertEqual(options.execv_args, ('/bin/cat', ['/bin/cat']) )
+        parent_envs = {k: os.environ[k] for k in os.environ if not k.startswith('SUPERVISOR_')}
+        passed_env = {k: v for k, v in parent_envs.items() if k in options.execv_environment}
+        self.assertDictEqual({}, passed_env)
+
     def test_spawn_as_child_uses_pconfig_environment(self):
         options = DummyOptions()
         options.forkpid = 0
